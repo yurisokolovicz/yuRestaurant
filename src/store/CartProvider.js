@@ -9,8 +9,23 @@ const defaultCartState = {
 // The reducer function is a function that receives the current state and an action as arguments and returns a new state. The second argument of the useReducer hook is the initial state of the reducer function.
 const cartReducer = (state, action) => {
     if (action.type === 'ADD') {
-        // The concat method returns a new array and does not mutate the original array
-        const updatedItems = state.items.concat(action.item);
+        // The findIndex method returns the index of the first element in the array that satisfies the provided testing function. Otherwise, it returns -1, indicating that no element passed the test.
+        const existingCartItemIndex = state.items.findIndex(item => item.id === action.item.id);
+        const existingCartItem = state.items[existingCartItemIndex];
+        let updatedItems;
+
+        if (existingCartItem) {
+            const updatedItem = {
+                ...existingCartItem,
+                amount: existingCartItem.amount + action.item.amount
+            };
+            updatedItems = [...state.items];
+            updatedItems[existingCartItemIndex] = updatedItem;
+        } else {
+            // The concat method returns a new array and does not mutate the original array
+            updatedItems = state.items.concat(action.item);
+        }
+
         const updatedTotalAmount = state.totalAmount + action.item.price * action.item.amount;
         return {
             items: updatedItems,
