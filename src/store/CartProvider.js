@@ -1,14 +1,40 @@
-// The goal of this component is to provide a context to all the components in the app
+import userEvent from '@testing-library/user-event';
+import { useReducer } from 'react';
 import CartContext from './cart-context';
 
-const CartProvider = props => {
-    const addItemToCartHandler = item => {};
+const defaultCartState = {
+    items: [],
+    totalAmount: 0
+};
 
-    const removeItemFromCartHandler = id => {};
+// The reducer function is a function that receives the current state and an action as arguments and returns a new state. The second argument of the useReducer hook is the initial state of the reducer function.
+const cartReducer = (state, action) => {
+    if (action.type === 'ADD') {
+        // The concat method returns a new array and does not mutate the original array
+        const updatedItems = state.items.concat(action.item);
+        const updatedTotalAmount = state.totalAmount + action.item.price * action.item.amount;
+        return {
+            items: updatedItems,
+            totalAmount: updatedTotalAmount
+        };
+    } else return defaultCartState;
+};
+
+const CartProvider = props => {
+    // The useReducer hook returns an array with two elements. The first element is the current state and the second element is a function that allows us to update the state. The first argument of the useReducer hook is the reducer function and the second argument is the initial state of the reducer function.
+    const [cartState, dispatchCartAction] = useReducer(cartReducer, defaultCartState);
+
+    const addItemToCartHandler = item => {
+        dispatchCartAction({ type: 'ADD', item: item });
+    };
+
+    const removeItemFromCartHandler = id => {
+        dispatchCartAction({ type: 'REMOVE', id: id });
+    };
 
     const cartContext = {
-        items: [],
-        totalAmount: 0,
+        items: cartState.items,
+        totalAmount: cartState.totalAmount,
         addItem: addItemToCartHandler,
         removeItem: removeItemFromCartHandler
     };
@@ -19,3 +45,5 @@ const CartProvider = props => {
 export default CartProvider;
 
 // Passing props.children in the CartContext.Provider component allows us to wrap the CartProvider component around the App component in the index.js file
+
+// The goal of this component is to provide a context to all the components in the app
