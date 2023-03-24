@@ -12,6 +12,7 @@ const cartReducer = (state, action) => {
         // The findIndex method returns the index of the first element in the array that satisfies the provided testing function. Otherwise, it returns -1, indicating that no element passed the test.
         const existingCartItemIndex = state.items.findIndex(item => item.id === action.item.id);
         const existingCartItem = state.items[existingCartItemIndex];
+        const updatedTotalAmount = state.totalAmount + action.item.price * action.item.amount;
         let updatedItems;
 
         if (existingCartItem) {
@@ -26,12 +27,31 @@ const cartReducer = (state, action) => {
             updatedItems = state.items.concat(action.item);
         }
 
-        const updatedTotalAmount = state.totalAmount + action.item.price * action.item.amount;
         return {
             items: updatedItems,
             totalAmount: updatedTotalAmount
         };
-    } else return defaultCartState;
+    }
+
+    if (action.type === 'REMOVE') {
+        const existingCartItemIndex = state.items.findIndex(item => item.id === action.id);
+        const existingItem = state.items[existingCartItemIndex];
+        const updatedTotalAmount = state.totalAmount - existingItem.price;
+        let updatedItems;
+        if (existingItem.amount === 1) {
+            updatedItems = state.items.filter(item => item.id !== action.id);
+        } else {
+            const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+            updatedItems = [...state.items];
+            updatedItems[existingCartItemIndex] = updatedItem;
+        }
+
+        return {
+            items: updatedItems,
+            totalAmount: updatedTotalAmount
+        };
+    }
+    return defaultCartState;
 };
 
 const CartProvider = props => {
@@ -59,5 +79,4 @@ const CartProvider = props => {
 export default CartProvider;
 
 // Passing props.children in the CartContext.Provider component allows us to wrap the CartProvider component around the App component in the index.js file
-
-// The goal of this component is to provide a context to all the components in the app
+// The goal of this component is to provide a context to all the components in the app.
