@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event';
 import { useReducer } from 'react';
 import CartContext from './cart-context';
 
