@@ -12,6 +12,14 @@
     font-weight: bold;
 }
 
+@media screen and (max-width: 768px) {
+    .button {
+        width: 35%;
+        font-size: small;
+        padding: 0.25rem 0.95rem;
+    }
+}
+
 .button:hover,
 .button:active {
     background-color: #7c310e;
