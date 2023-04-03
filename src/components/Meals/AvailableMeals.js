@@ -3,40 +3,19 @@ import Card from '../UI/Card';
 import styles from './AvailableMeals.module.css';
 import MealItem from './MealItem/MealItem';
 
-// const DUMMY_MEALS = [
-//     {
-//         id: 'm1',
-//         name: 'Churrasco',
-//         description: 'Meet with fries.',
-//         price: 22.99
-//     },
-//     {
-//         id: 'm2',
-//         name: 'Rice with meat',
-//         description: 'A gaucho specialty!',
-//         price: 19.47
-//     },
-//     {
-//         id: 'm3',
-//         name: 'Barbecue Burger',
-//         description: 'American, raw, meaty.',
-//         price: 12.99
-//     },
-//     {
-//         id: 'm4',
-//         name: 'Pancakes',
-//         description: 'Healthy & delicious!',
-//         price: 18.99
-//     }
-// ];
-
 const AvailableMeals = () => {
     const [meals, setMeals] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [httpError, setHttpError] = useState();
 
     useEffect(() => {
         const fetchMeals = async () => {
             const response = await fetch('https://react-http-f7e2d-default-rtdb.firebaseio.com/meals.json');
+
+            if (!response.ok) {
+                throw new Error('Something went wrong!');
+            }
+
             const responseData = await response.json();
 
             const loadedMeals = [];
@@ -50,17 +29,29 @@ const AvailableMeals = () => {
                 });
             }
 
-            console.log(responseData);
+            // console.log(responseData);
             setMeals(loadedMeals);
             setIsLoading(false);
         };
-        fetchMeals();
+
+        fetchMeals().catch(error => {
+            setIsLoading(false);
+            setHttpError(error.message);
+        });
     }, []); // no dependencies so it runs only once when the component is rendered for the first time.
 
     if (isLoading) {
         return (
             <section className={styles.mealsLoading}>
                 <p>Loading...</p>
+            </section>
+        );
+    }
+
+    if (httpError) {
+        return (
+            <section className={styles.mealsError}>
+                <p>{httpError}</p>
             </section>
         );
     }
