@@ -1,32 +1,42 @@
 import styles from './Checkout.module.css';
+import { useRef } from 'react';
 
 const Checkout = props => {
+    const cardInputRef = useRef();
+    const secureCodeInputRef = useRef();
+    const addressInputRef = useRef();
+
     const confirmHandler = event => {
         event.preventDefault();
+
+        const enteredCard = cardInputRef.current.value;
+        const enteredSecureCode = secureCodeInputRef.current.value;
+        const enteredAddress = addressInputRef.current.value;
     };
 
     return (
-        <form onSubmit={confirmHandler}>
+        <form className={styles.form} onSubmit={confirmHandler}>
             <div className={styles.control}>
-                <label htmlFor="name">Your Name</label>
-                <input type="text" id="name" />
+                <label htmlFor="text">PAYMENT</label>
             </div>
             <div className={styles.control}>
-                <label htmlFor="street">Street</label>
-                <input type="text" id="name" />
+                <label htmlFor="card">Card number</label>
+                <input type="number" id="card" ref={cardInputRef} />
             </div>
             <div className={styles.control}>
-                <label htmlFor="postal">Postal Code</label>
-                <input type="text" id="postal" />
+                <label htmlFor="postal">Secure code</label>
+                <input type="number" id="postal" ref={secureCodeInputRef} />
             </div>
             <div className={styles.control}>
-                <label htmlFor="city">City</label>
-                <input type="text" id="city" />
+                <label htmlFor="city">Address</label>
+                <input type="text" id="city" ref={addressInputRef} />
             </div>
-            <button type="button" onClick={props.onCancel}>
-                Cancel
-            </button>
-            <button>Confirm</button>
+            <div className={styles.actions}>
+                <button type="button" onClick={props.onCancel}>
+                    Cancel
+                </button>
+                <button className={styles.submit}>Confirm</button>
+            </div>
         </form>
     );
 };
