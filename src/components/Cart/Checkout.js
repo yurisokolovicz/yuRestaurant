@@ -66,7 +66,7 @@ const Checkout = props => {
             <div className={`${styles.control} ${formInputsValidity.name ? '' : styles.invalid}`}>
                 <label htmlFor="name">Full Name</label>
                 <input type="text" id="name" ref={nameInputRef} />
-                {!formInputsValidity.card && <p>Please enter a valid address!</p>}
+                {!formInputsValidity.card && <p>Please enter a valid name!</p>}
             </div>
             <div className={styles.actions}>
                 <button type="button" onClick={props.onCancel}>
